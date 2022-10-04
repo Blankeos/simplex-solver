@@ -5,13 +5,13 @@ import MathField from "../components/MathField";
 
 import { compile } from "mathjs";
 import produce from "immer";
+import inputToMatrix from "@/util/inputToMatrix";
 
-const initialInput = {
+const initialInput: InputType = {
   z: "500x_1+250x_2",
-  /* prettier-ignore */ constraints: ["20x_1+16x_2\\le 300", "10x_2+35x_3\\le200", "25x_2+50x_3+45x_4\\ge1250"],
+  /* prettier-ignore */ constraints: ["20x_1+16x_2=300", "10x_2+35x_3=200", "25x_2+50x_3+45x_4=1250"],
 };
 
-type BaseStateType = typeof initialInput;
 type ACTIONS =
   | {
       type: "setZ";
@@ -28,7 +28,7 @@ type ACTIONS =
 const Home: NextPage = () => {
   const [latex, setLatex] = useState("");
   const [input, dispatch] = useReducer(
-    produce((draft: BaseStateType, action: ACTIONS) => {
+    produce((draft: InputType, action: ACTIONS) => {
       switch (action.type) {
         case "setZ":
           draft.z = action.payload;
@@ -46,8 +46,7 @@ const Home: NextPage = () => {
   );
 
   function handleCompile() {
-    const parsed = latex.split(/[+\-\s]/g);
-    console.log(parsed);
+    inputToMatrix(input);
   }
   return (
     <div className="min-h-screen flex flex-col">
@@ -79,7 +78,7 @@ const Home: NextPage = () => {
             </div>
             <div className="mt-3">
               <h2 className="font-semibold mb-3 text-gray-700">
-                System of Constraints (Canonical)
+                System of Constraints (Standard Canonical Form)
               </h2>
               <div className="flex flex-col gap-y-1 bg-white p-3 px-3 border border-slate-300 rounded-md">
                 {input.constraints.map((constraint, i) => {
