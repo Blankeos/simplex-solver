@@ -3,13 +3,14 @@ import Head from "next/head";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import MathField from "../components/MathField";
 
-import { compile } from "mathjs";
+import { compile, Matrix } from "mathjs";
 import produce from "immer";
 import inputToMatrix from "@/util/inputToMatrix";
+import Tableau from "@/components/Tableau";
 
 const initialInput: InputType = {
   z: "500x_1+250x_2",
-  /* prettier-ignore */ constraints: ["20x_1+16x_2=300", "10x_2+35x_3=200", "25x_2+50x_3+45x_4=1250"],
+  /* prettier-ignore */ constraints: ["x_1+2x_4-x_5=10", "x_2-x_4-5x_5=20", "x_3+6x_4-12x_5=18","-2x_4+3x_5=60"],
 };
 
 type ACTIONS =
@@ -26,7 +27,7 @@ type ACTIONS =
       index: number;
     };
 const Home: NextPage = () => {
-  const [latex, setLatex] = useState("");
+  const [matrix, setMatrix] = useState<Matrix>();
   const [input, dispatch] = useReducer(
     produce((draft: InputType, action: ACTIONS) => {
       switch (action.type) {
@@ -46,7 +47,7 @@ const Home: NextPage = () => {
   );
 
   function handleCompile() {
-    inputToMatrix(input);
+    setMatrix(inputToMatrix(input));
   }
   return (
     <div className="min-h-screen flex flex-col">
@@ -98,9 +99,20 @@ const Home: NextPage = () => {
                 })}
               </div>
             </div>
+            <button
+              onClick={handleCompile}
+              className="hover:bg-gray-200 p-2 rounded-md border"
+            >
+              Parse Inputs into <b>Tableau</b>
+            </button>
+            {/* Tableau */}
+            <div className="mt-3">
+              <h2 className="font-semibold mb-3 text-gray-700">Tableau</h2>
+              {!matrix && "Nothing parsed yet..."}
+              {matrix && <Tableau matrix={matrix} />}
+            </div>
           </div>
         </div>
-        <button onClick={handleCompile}>Compile Latex</button>
       </main>
 
       <footer>Footer</footer>

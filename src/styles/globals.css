@@ -31,3 +31,29 @@ a {
     background: black;
   }
 } */
+
+.tableau {
+  font-size: 0.9em;
+  @apply inline-block;
+}
+
+.tableau table {
+  min-width: 400px;
+  @apply border-collapse border-r-2 border-l-2 border-r-slate-800 border-l-slate-800;
+}
+.tableau th,
+.tableau td {
+  padding: 12px 15px;
+}
+
+.tableau tr:nth-of-type(even) {
+  @apply bg-slate-50;
+}
+
+.tableau > .horizontal-border {
+  @apply flex justify-between;
+}
+
+.tableau > .horizontal-border > span {
+  @apply block border-b-2 border-b-slate-800 w-10 bg-slate-800;
+}
