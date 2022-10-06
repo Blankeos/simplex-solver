@@ -44,6 +44,7 @@ a {
 .tableau th,
 .tableau td {
   padding: 12px 15px;
+  @apply text-center;
 }
 
 .tableau tr:nth-of-type(even) {
