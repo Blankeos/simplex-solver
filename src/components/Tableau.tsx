@@ -2,10 +2,10 @@ import React from "react";
 import { Matrix } from "mathjs";
 interface TableauProps {
   matrix: Matrix;
+  variableNames: string[];
 }
 
-const Tableau: React.FC<TableauProps> = ({ matrix }) => {
-  const display = JSON.stringify(matrix.toArray());
+const Tableau: React.FC<TableauProps> = ({ matrix, variableNames }) => {
   return (
     <>
       <div className="tableau">
@@ -14,6 +14,11 @@ const Tableau: React.FC<TableauProps> = ({ matrix }) => {
           <span />
         </span>
         <table className="">
+          <tr>
+            {[...variableNames, "RHS", "θ"].map((varName, i) => (
+              <th key={i}>{varName}</th>
+            ))}
+          </tr>
           {matrix.toArray().map((row, i) => (
             <tr key={i}>
               {(row as number[]).map((col, i) => (
@@ -27,12 +32,6 @@ const Tableau: React.FC<TableauProps> = ({ matrix }) => {
           <span />
         </span>
       </div>
-
-      <pre className="whitespace-pre-wrap">{display}</pre>
-      <br />
-      <br />
-      <br />
-      <pre className="whitespace-pre-wrap">{JSON.stringify(matrix)}</pre>
     </>
   );
 };

@@ -5,7 +5,7 @@ import MathField from "../components/MathField";
 
 import { compile, Matrix } from "mathjs";
 import produce from "immer";
-import inputToMatrix from "@/util/inputToMatrix";
+import parseInput, { ParsedInput } from "@/util/parseInput";
 import Tableau from "@/components/Tableau";
 
 const initialInput: InputType = {
@@ -27,7 +27,7 @@ type ACTIONS =
       index: number;
     };
 const Home: NextPage = () => {
-  const [matrix, setMatrix] = useState<Matrix>();
+  const [parsedInput, setParsedInput] = useState<ParsedInput>();
   const [input, dispatch] = useReducer(
     produce((draft: InputType, action: ACTIONS) => {
       switch (action.type) {
@@ -47,7 +47,9 @@ const Home: NextPage = () => {
   );
 
   function handleCompile() {
-    setMatrix(inputToMatrix(input));
+    const parsedInput = parseInput(input);
+
+    setParsedInput(parsedInput);
   }
   return (
     <div className="min-h-screen flex flex-col">
@@ -58,7 +60,9 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex flex-col flex-grow">
         <div className="max-w-5xl w-full mx-auto px-4">
-          <h1 className="text-center text-lg font-semibold">Simplex Solver</h1>
+          <h1 className="text-center text-lg font-semibold my-5">
+            Simplex Solver
+          </h1>
           <div className="flex flex-col gap-y-2 mt-5">
             <div>
               <h2 className="font-semibold mb-3 text-gray-700">
@@ -67,7 +71,7 @@ const Home: NextPage = () => {
               <div className="flex gap-x-5 items-center bg-white rounded-md p-1 px-3 border border-slate-300">
                 <p className="">min Z</p>
                 <span>=</span>
-                <div className="bg-white min-w-[8rem] rounded-md">
+                <div className="bg-white rounded-md flex-grow">
                   <MathField
                     latex={input.z}
                     onChange={(e) => {
@@ -108,8 +112,13 @@ const Home: NextPage = () => {
             {/* Tableau */}
             <div className="mt-3">
               <h2 className="font-semibold mb-3 text-gray-700">Tableau</h2>
-              {!matrix && "Nothing parsed yet..."}
-              {matrix && <Tableau matrix={matrix} />}
+              {!parsedInput && "Nothing parsed yet..."}
+              {parsedInput && (
+                <Tableau
+                  matrix={parsedInput.matrix}
+                  variableNames={parsedInput.variableNames}
+                />
+              )}
             </div>
           </div>
         </div>
