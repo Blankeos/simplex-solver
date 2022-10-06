@@ -1,27 +1,17 @@
 import { matrix } from "mathjs";
 
-export default function inputToMatrix(input: InputType) {
+export type ParsedInput = ReturnType<typeof parseInput>;
+export default function parseInput(input: InputType) {
   let z = input.z;
-  // console.log("z", parseEquation(z));
-  // input.constraints.forEach((constraint, i) => {
-  //   console.log(`constraint${i + 1}`, parseEquation(constraint));
-  // });
 
   const parsedConstraints = input.constraints.map((constraint) =>
     parseEquation(constraint)
   );
-  const variablesForAllConstraints = parsedConstraints
-    .map((c, i) => {
-      return c.variables;
-    })
-    .flat()
-    .sort();
-  const uniqueVariablesForAllConstraints = variablesForAllConstraints.filter(
-    (item, i, ar) => ar.indexOf(item) === i
-  ) as string[];
+
+  const variableNames = getUniqueVariables(parsedConstraints);
 
   const constraintMatrix = parsedConstraints.map((constraint) => {
-    const coefficients = uniqueVariablesForAllConstraints.map((variable) => {
+    const coefficients = variableNames.map((variable) => {
       const varIndex = constraint.variables.indexOf(variable);
 
       if (varIndex === -1) return 0;
@@ -38,16 +28,26 @@ export default function inputToMatrix(input: InputType) {
     constraint.push(bVector[i]);
   });
 
-  console.log(constraintMatrix);
-
-  // const m = matrix([
-  //   [1, 0, 0, 2, -1, 10],
-  //   [0, 1, 0, -1, -5, 20],
-  //   [0, 0, 1, 6, -12, 18],
-  //   [0, 0, 0, -2, 3, 60],
-  // ]);
   const m = matrix(constraintMatrix);
-  return m;
+  return {
+    matrix: m,
+    variableNames: variableNames,
+  };
+}
+
+function getUniqueVariables(parsedEquationList: IParsedEquation[]) {
+  // Get All Variables of All Constraints
+  const variablesForAllConstraints = parsedEquationList
+    .map((c, i) => {
+      return c.variables;
+    })
+    .flat()
+    .sort();
+
+  // Filter Unique Values and only return unique values
+  return variablesForAllConstraints.filter(
+    (item, i, ar) => ar.indexOf(item) === i
+  ) as string[];
 }
 
 function parseEquation(equation: string) {
