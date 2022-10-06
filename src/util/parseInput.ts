@@ -28,6 +28,8 @@ export default function parseInput(input: InputType) {
     constraint.push(bVector[i]);
   });
 
+  // Theta Column
+
   const m = matrix(constraintMatrix);
   return {
     matrix: m,
